@@ -7,3 +7,10 @@ func Equals[TValue comparable](t *testing.T, value1, value2 TValue) {
 		t.Fatalf("🔴 Expected value: %v to equal %v", value1, value2)
 	}
 }
+
+func Each[TValue comparable](values []TValue, callback func(value TValue)) {
+	for _, value := range values {
+		callback(value)
+	}
+
+}
