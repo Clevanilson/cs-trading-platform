@@ -1,6 +1,9 @@
 package assert
 
-import "testing"
+import (
+	"fmt"
+	"testing"
+)
 
 func Equals[TValue comparable](t *testing.T, value1, value2 TValue) {
 	if value1 != value2 {
@@ -8,9 +11,17 @@ func Equals[TValue comparable](t *testing.T, value1, value2 TValue) {
 	}
 }
 
-func Each[TValue comparable](values []TValue, callback func(value TValue)) {
+func NotEquals[TValue comparable](t *testing.T, value1, value2 TValue) {
+	if value1 == value2 {
+		t.Fatalf("🔴 Expected value: %v to not equal %v", value1, value2)
+	}
+}
+
+func Each[TValue comparable](t *testing.T, values []TValue, callback func(value TValue)) {
 	for _, value := range values {
-		callback(value)
+		t.Run(fmt.Sprintf("%v", value), func(_ *testing.T) {
+			callback(value)
+		})
 	}
 
 }
