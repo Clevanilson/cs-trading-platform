@@ -11,5 +11,5 @@ func Newdomain(resource string) *domain {
 }
 
 func (e *domain) Error() string {
-	return fmt.Sprintf("Inválid %v", e.resource)
+	return fmt.Sprintf("Invalid %v", e.resource)
 }
