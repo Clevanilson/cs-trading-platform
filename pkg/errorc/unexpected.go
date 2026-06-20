@@ -4,7 +4,7 @@ type unexpected struct {
 	cause error
 }
 
-func Newunexpected(cause error) *unexpected {
+func NewUnexpected(cause error) *unexpected {
 	return &unexpected{cause}
 }
 
