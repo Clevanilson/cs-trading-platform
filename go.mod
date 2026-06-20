@@ -1,3 +1,5 @@
 module github.com/clevanilson/cs-trading-platform
 
 go 1.26.4
+
+require github.com/google/uuid v1.6.0

@@ -1,20 +1,22 @@
 package entity
 
-import valueobject "github.com/clevanilson/cs-trading-platform/internal/domain/value_object"
+import (
+	valueobject "github.com/clevanilson/cs-trading-platform/internal/domain/value_object"
+)
 
 type Account interface {
 	Name() string
-	ID() *int
+	ID() string
 }
 
 type account struct {
 	name valueobject.Name
-	id   *int
+	id   valueobject.ID
 }
 
 type AccountBuilder struct {
 	Name string
-	id   *int
+	ID   *string
 }
 
 func NewAccount(builder AccountBuilder) (*account, error) {
@@ -22,13 +24,16 @@ func NewAccount(builder AccountBuilder) (*account, error) {
 	if err != nil {
 		return nil, err
 	}
-	return &account{name: name}, nil
+	return &account{
+		name: name,
+		id:   *valueobject.NewID(builder.ID),
+	}, nil
 }
 
 func (a *account) Name() string {
 	return a.name.Value()
 }
 
-func (a *account) ID() *int {
-	return a.id
+func (a *account) ID() string {
+	return a.id.Value()
 }

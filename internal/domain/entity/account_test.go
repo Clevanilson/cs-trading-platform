@@ -9,13 +9,15 @@ import (
 
 func TestAccount(t *testing.T) {
 	t.Run("With valid data", func(t *testing.T) {
+		ID := "uuid"
 		sut, err := entity.NewAccount(entity.AccountBuilder{
 			Name: "Renoir",
+			ID:   &ID,
 		})
 		assert.NotEquals(t, sut, nil)
 		assert.Equals(t, err, nil)
 		assert.Equals(t, sut.Name(), "Renoir")
-		assert.Equals(t, sut.ID(), nil)
+		assert.Equals(t, sut.ID(), ID)
 	})
 
 	t.Run("With invalid name", func(t *testing.T) {
