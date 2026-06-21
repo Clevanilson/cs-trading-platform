@@ -1,6 +1,9 @@
 package usecase
 
-import "github.com/clevanilson/cs-trading-platform/internal/application/repository"
+import (
+	"github.com/clevanilson/cs-trading-platform/internal/application/repository"
+	"github.com/clevanilson/cs-trading-platform/pkg/errorc"
+)
 
 type GetAccount struct {
 	repository repository.AccountRepository
@@ -11,13 +14,16 @@ func NewGetAccount(repository repository.AccountRepository) *GetAccount {
 }
 
 func (u *GetAccount) Execute(input GetAccountInput) (*GetAccountOutput, error) {
-	acount, err := u.repository.GetByID(input.ID)
+	account, err := u.repository.GetByID(input.ID)
 	if err != nil {
 		return nil, err
 	}
+	if account == nil {
+		return nil, errorc.NewNotFound("Account")
+	}
 	return &GetAccountOutput{
-		ID:   acount.ID(),
-		Name: acount.Name(),
+		ID:   account.ID(),
+		Name: account.Name(),
 	}, nil
 }
 

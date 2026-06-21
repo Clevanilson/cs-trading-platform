@@ -6,35 +6,34 @@ import (
 
 	"github.com/clevanilson/cs-trading-platform/internal/application/usecase"
 	infrarepository "github.com/clevanilson/cs-trading-platform/internal/infra/repository"
+	"github.com/clevanilson/cs-trading-platform/pkg/errorc"
+	"github.com/clevanilson/cs-trading-platform/pkg/server"
 	"github.com/gin-gonic/gin"
 )
 
 func main() {
 	accountRepository := infrarepository.NewAccountMemoryRepository()
 
-	server := gin.Default()
-	server.POST("/signup", func(c *gin.Context) {
+	httpServer := gin.Default()
+	httpServer.POST("/signup", func(c *gin.Context) {
 		var input usecase.CreateAccountInput
 		if err := c.ShouldBindBodyWithJSON(&input); err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"message": "Malformed json",
-			})
+			server.HandleError(c, err)
+			return
 		}
 		useCase := usecase.NewCreateAccount(accountRepository)
 		output, err := useCase.Execute(input)
 		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"message": "Bad request",
-			})
+			server.HandleError(c, err)
+			return
 		}
 		c.JSON(http.StatusCreated, output)
 	})
-	server.GET("/get_account/:id", func(c *gin.Context) {
+	httpServer.GET("/get_account/:id", func(c *gin.Context) {
 		id, ok := c.Params.Get("id")
 		if !ok {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"message": "Bad request",
-			})
+			server.HandleError(c, errorc.NewDomain("id"))
+			return
 		}
 		input := usecase.GetAccountInput{
 			ID: id,
@@ -42,12 +41,11 @@ func main() {
 		useCase := usecase.NewGetAccount(accountRepository)
 		output, err := useCase.Execute(input)
 		if err != nil {
-			c.JSON(http.StatusBadRequest, gin.H{
-				"message": "Bad request",
-			})
+			server.HandleError(c, err)
+			return
 		}
 		c.JSON(http.StatusOK, output)
 	})
-	server.Run(":3000")
+	httpServer.Run(":3000")
 	fmt.Println("Running My Test")
 }

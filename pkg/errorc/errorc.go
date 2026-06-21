@@ -1,6 +1,14 @@
 package errorc
 
 type ErrorC interface {
-	Code() string
+	Code() ErrorCode
 	Error() string
 }
+
+type ErrorCode string
+
+const (
+	DomainErrorCode     ErrorCode = "DomainError"
+	NotFoundErrorCode   ErrorCode = "NotFoundError"
+	UnexpectedErrorCode ErrorCode = "UnexpectedError"
+)

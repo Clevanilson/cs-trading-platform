@@ -13,3 +13,7 @@ func NewNotFound(resource string) *notFound {
 func (e *notFound) Error() string {
 	return fmt.Sprintf("%v not found", e.resource)
 }
+
+func (e *notFound) Code() ErrorCode {
+	return NotFoundErrorCode
+}

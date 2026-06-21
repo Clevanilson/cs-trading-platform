@@ -28,7 +28,7 @@ func TestName(t *testing.T) {
 		assert.Each(t, values, func(value string) {
 			sut, err := valueobject.NewName(value)
 			assert.NotEquals(t, err, nil)
-			assert.Equals(t, err.Error(), errorc.Newdomain("name").Error())
+			assert.Equals(t, err.Error(), errorc.NewDomain("name").Error())
 			assert.Equals(t, sut, nil)
 		})
 	})
