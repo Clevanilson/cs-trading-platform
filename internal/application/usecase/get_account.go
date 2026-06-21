@@ -22,10 +22,10 @@ func (u *GetAccount) Execute(input GetAccountInput) (*GetAccountOutput, error) {
 }
 
 type GetAccountInput struct {
-	ID string
+	ID string `json:"id"`
 }
 
 type GetAccountOutput struct {
-	ID   string
-	Name string
+	ID   string `json:"id"`
+	Name string `json:"name"`
 }

@@ -28,9 +28,9 @@ func (u *CreateAccount) Execute(input CreateAccountInput) (*CreateAccountOutput,
 }
 
 type CreateAccountInput struct {
-	Name string
+	Name string `json:"name"`
 }
 
 type CreateAccountOutput struct {
-	ID string
+	ID string `json:"id"`
 }
