@@ -2,16 +2,21 @@ package entity
 
 import (
 	valueobject "github.com/clevanilson/cs-trading-platform/internal/domain/value_object"
+	"github.com/clevanilson/cs-trading-platform/pkg/errorc"
 )
 
 type Account interface {
 	Name() string
 	ID() string
+	Deposit(assetID string, amount int) error
+	Withdraw(assetID string, amount int) error
+	GetBalanceByAssetID(assetID string) (Balance, error)
 }
 
 type account struct {
-	name valueobject.Name
-	id   valueobject.ID
+	name     valueobject.Name
+	id       valueobject.ID
+	balances map[string]Balance
 }
 
 type AccountBuilder struct {
@@ -25,8 +30,9 @@ func NewAccount(builder AccountBuilder) (*account, error) {
 		return nil, err
 	}
 	return &account{
-		name: name,
-		id:   *valueobject.NewID(builder.ID),
+		name:     name,
+		id:       *valueobject.NewID(builder.ID),
+		balances: make(map[string]Balance),
 	}, nil
 }
 
@@ -36,4 +42,42 @@ func (a *account) Name() string {
 
 func (a *account) ID() string {
 	return a.id.Value()
+}
+
+func (a *account) Deposit(assetID string, amount int) error {
+	currentBalance, err := a.GetBalanceByAssetID(assetID)
+	if err == nil {
+		currentBalance.Deposit(amount)
+		return nil
+	}
+	balance, err := NewBalance(BalanceBuilder{
+		AssetID: assetID,
+		Amount:  amount,
+	})
+	if err != nil {
+		return err
+	}
+	a.balances[assetID] = balance
+	return nil
+}
+
+func (a *account) GetBalanceByAssetID(assetID string) (Balance, error) {
+	balance, ok := a.balances[assetID]
+	if !ok {
+		return nil, errorc.NewNotFound("Balance")
+	}
+	return balance, nil
+}
+
+func (a *account) Withdraw(assetID string, amount int) error {
+	balance, err := a.GetBalanceByAssetID(assetID)
+	if err != nil {
+		return err
+	}
+	err = balance.Withdraw(amount)
+	if err != nil {
+		return err
+	}
+	return nil
+
 }
