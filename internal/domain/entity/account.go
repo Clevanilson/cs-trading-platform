@@ -48,7 +48,9 @@ func (a *account) ID() string {
 func (a *account) Deposit(assetID string, amount int) error {
 	currentBalance, err := a.GetBalanceByAssetID(assetID)
 	if err == nil {
-		currentBalance.Deposit(amount)
+		if err = currentBalance.Deposit(amount); err != nil {
+			return err
+		}
 		return nil
 	}
 	balance, err := NewBalance(BalanceBuilder{
