@@ -77,8 +77,7 @@ func (a *account) Withdraw(assetID string, amount int) error {
 	if err != nil {
 		return err
 	}
-	err = balance.Withdraw(amount)
-	if err != nil {
+	if err = balance.Withdraw(amount); err != nil {
 		return err
 	}
 	if balance.Amount() == 0 {
