@@ -18,7 +18,7 @@ func NewName(value string) (*name, error) {
 	pattern := regexp.MustCompile(`^[a-zA-Z\s]{2,255}$`)
 	isValid := pattern.MatchString(value)
 	if !isValid {
-		return nil, errorc.NewDomain("name")
+		return nil, errorc.NewDomain("Invalid name")
 	}
 	return &name{value}, nil
 }

@@ -21,7 +21,7 @@ type BalanceBuilder struct {
 
 func NewBalance(builder BalanceBuilder) (*balance, error) {
 	if builder.Amount <= 0 {
-		return nil, errorc.NewDomain("amount")
+		return nil, errorc.NewDomain("Invalid amount")
 	}
 	return &balance{
 		assetID: builder.AssetID,
@@ -39,7 +39,7 @@ func (b *balance) Amount() uint64 {
 
 func (b *balance) Deposit(amount int) error {
 	if amount <= 0 {
-		return errorc.NewDomain("amount")
+		return errorc.NewDomain("Invalid amount")
 	}
 	b.amount += uint64(amount)
 	return nil
@@ -47,10 +47,10 @@ func (b *balance) Deposit(amount int) error {
 
 func (b *balance) Withdraw(amount int) error {
 	if amount <= 0 {
-		return errorc.NewDomain("amount")
+		return errorc.NewDomain("Invalid amount")
 	}
 	if b.amount < uint64(amount) {
-		return errorc.NewDomain("amount")
+		return errorc.NewDomain("Invalid amount")
 	}
 	b.amount -= uint64(amount)
 	return nil

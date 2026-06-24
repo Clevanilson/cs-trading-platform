@@ -2,20 +2,24 @@ package valueobject
 
 import "github.com/google/uuid"
 
-type ID struct {
+type ID interface {
+	Value() string
+}
+
+type id struct {
 	value string
 }
 
-func (id ID) Value() string {
-	return id.value
+func (v id) Value() string {
+	return v.value
 }
 
-func NewID(value *string) *ID {
-	var id string
+func NewID(value *string) *id {
+	var _value string
 	if value != nil {
-		id = *value
+		_value = *value
 	} else {
-		id = uuid.New().String()
+		_value = uuid.New().String()
 	}
-	return &ID{value: id}
+	return &id{value: _value}
 }

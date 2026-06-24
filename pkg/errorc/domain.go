@@ -1,17 +1,15 @@
 package errorc
 
-import "fmt"
-
 type domain struct {
-	resource string
+	message string
 }
 
-func NewDomain(resource string) *domain {
-	return &domain{resource}
+func NewDomain(message string) *domain {
+	return &domain{message}
 }
 
 func (e *domain) Error() string {
-	return fmt.Sprintf("Invalid %v", e.resource)
+	return e.message
 }
 
 func (e *domain) Code() ErrorCode {

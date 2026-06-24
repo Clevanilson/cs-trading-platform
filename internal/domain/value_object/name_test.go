@@ -5,7 +5,6 @@ import (
 
 	valueobject "github.com/clevanilson/cs-trading-platform/internal/domain/value_object"
 	"github.com/clevanilson/cs-trading-platform/pkg/assert"
-	"github.com/clevanilson/cs-trading-platform/pkg/errorc"
 )
 
 func TestName(t *testing.T) {
@@ -28,7 +27,7 @@ func TestName(t *testing.T) {
 		assert.Each(t, values, func(value string) {
 			sut, err := valueobject.NewName(value)
 			assert.NotEquals(t, err, nil)
-			assert.Equals(t, err.Error(), errorc.NewDomain("name").Error())
+			assert.Equals(t, err.Error(), "Invalid name")
 			assert.Equals(t, sut, nil)
 		})
 	})
