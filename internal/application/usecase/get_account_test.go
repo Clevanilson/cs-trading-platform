@@ -24,6 +24,6 @@ func TestGetAccoun(t *testing.T) {
 		assert.Equals(t, err, nil)
 		assert.Equals(t, output.Name, account.Name())
 		assert.Equals(t, output.ID, account.ID())
-
+		assert.Equals(t, len(output.Balance), 0)
 	})
 }

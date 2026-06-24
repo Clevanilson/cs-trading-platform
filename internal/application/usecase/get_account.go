@@ -21,9 +21,17 @@ func (u *GetAccount) Execute(input GetAccountInput) (*GetAccountOutput, error) {
 	if account == nil {
 		return nil, errorc.NewNotFound("Account")
 	}
+	balance := make([]getAccountOutpuBalance, 0)
+	for _, _asset := range account.Balances() {
+		balance = append(balance, getAccountOutpuBalance{
+			AssetID: _asset.AssetID(),
+			Amount:  _asset.Amount(),
+		})
+	}
 	return &GetAccountOutput{
-		ID:   account.ID(),
-		Name: account.Name(),
+		ID:      account.ID(),
+		Name:    account.Name(),
+		Balance: balance,
 	}, nil
 }
 
@@ -32,6 +40,12 @@ type GetAccountInput struct {
 }
 
 type GetAccountOutput struct {
-	ID   string `json:"id"`
-	Name string `json:"name"`
+	ID      string `json:"id"`
+	Name    string `json:"name"`
+	Balance []getAccountOutpuBalance
+}
+
+type getAccountOutpuBalance struct {
+	AssetID string `json:"asset_id"`
+	Amount  uint64 `json:"amount"`
 }
