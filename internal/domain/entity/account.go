@@ -11,6 +11,7 @@ type Account interface {
 	Deposit(assetID string, amount int) error
 	Withdraw(assetID string, amount int) error
 	GetBalanceByAssetID(assetID string) (Balance, error)
+	Balances() []Balance
 }
 
 type account struct {
@@ -78,6 +79,17 @@ func (a *account) Withdraw(assetID string, amount int) error {
 	if err != nil {
 		return err
 	}
+	if balance.Amount() == 0 {
+		delete(a.balances, assetID)
+	}
 	return nil
 
+}
+
+func (a *account) Balances() []Balance {
+	balances := make([]Balance, 0)
+	for _, balance := range a.balances {
+		balances = append(balances, balance)
+	}
+	return balances
 }

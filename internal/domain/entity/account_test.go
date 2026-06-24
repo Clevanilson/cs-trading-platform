@@ -33,20 +33,25 @@ func TestAccount(t *testing.T) {
 		sut, err := entity.NewAccount(entity.AccountBuilder{
 			Name: "Renoir",
 		})
-		err = sut.Deposit("123", 100)
+		err = sut.Deposit("USD", 100)
+		balance, err := sut.GetBalanceByAssetID("USD")
 		assert.Equals(t, err, nil)
-		balance, err := sut.GetBalanceByAssetID("123")
-		assert.Equals(t, err, nil)
+		assert.Equals(t, balance.AssetID(), "USD")
 		assert.Equals(t, balance.Amount(), 100)
-		err = sut.Deposit("123", 100)
-		assert.Equals(t, balance.Amount(), 200)
+		err = sut.Deposit("USD", 100)
+		err = sut.Deposit("BTC", 100)
+		assert.Equals(t, len(sut.Balances()), 2)
+		assert.Equals(t, sut.Balances()[0].AssetID(), "USD")
+		assert.Equals(t, sut.Balances()[0].Amount(), 200)
+		assert.Equals(t, sut.Balances()[1].AssetID(), "BTC")
+		assert.Equals(t, sut.Balances()[1].Amount(), 100)
 	})
 
 	t.Run("Deposit with invalid value", func(t *testing.T) {
 		sut, err := entity.NewAccount(entity.AccountBuilder{
 			Name: "Renoir",
 		})
-		err = sut.Deposit("123", -100)
+		err = sut.Deposit("USD", -100)
 		assert.NotEquals(t, err, nil)
 		assert.Equals(t, err.Error(), "Invalid amount")
 	})
@@ -55,11 +60,14 @@ func TestAccount(t *testing.T) {
 		sut, err := entity.NewAccount(entity.AccountBuilder{
 			Name: "Renoir",
 		})
-		err = sut.Deposit("123", 100)
-		err = sut.Withdraw("123", 50)
-		balance, err := sut.GetBalanceByAssetID("123")
+		err = sut.Deposit("USD", 100)
+		err = sut.Deposit("BTC", 100)
+		err = sut.Withdraw("USD", 50)
+		err = sut.Withdraw("BTC", 100)
 		assert.Equals(t, err, nil)
-		assert.Equals(t, balance.Amount(), 50)
+		assert.Equals(t, len(sut.Balances()), 1)
+		assert.Equals(t, sut.Balances()[0].AssetID(), "USD")
+		assert.Equals(t, sut.Balances()[0].Amount(), 50)
 	})
 
 	t.Run("Withdraw with invalid amount", func(t *testing.T) {
