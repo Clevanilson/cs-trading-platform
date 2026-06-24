@@ -5,7 +5,7 @@ import (
 	"github.com/clevanilson/cs-trading-platform/pkg/errorc"
 )
 
-type Depoist interface {
+type Deposit interface {
 	Execute(input DepositInput) error
 }
 
