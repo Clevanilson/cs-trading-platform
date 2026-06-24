@@ -19,6 +19,11 @@ func (r *accountMemoryRepository) Save(account entity.Account) error {
 	return nil
 }
 
+func (r *accountMemoryRepository) Update(account entity.Account) error {
+	r.data[account.ID()] = account
+	return nil
+}
+
 func (r *accountMemoryRepository) GetByID(id string) (entity.Account, error) {
 	account, ok := r.data[id]
 	if !ok {
