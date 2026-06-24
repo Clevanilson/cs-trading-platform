@@ -12,7 +12,7 @@ type Withdraw interface {
 type WithdrawInput struct {
 	AccountID string `json:"account_id"`
 	AssetID   string `json:"asset_id"`
-	Amount    int
+	Amount    float64
 }
 
 type withdraw struct {

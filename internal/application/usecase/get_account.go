@@ -46,6 +46,6 @@ type GetAccountOutput struct {
 }
 
 type getAccountOutpuBalance struct {
-	AssetID string `json:"asset_id"`
-	Amount  uint64 `json:"amount"`
+	AssetID string  `json:"asset_id"`
+	Amount  float64 `json:"amount"`
 }

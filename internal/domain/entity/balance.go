@@ -4,19 +4,19 @@ import "github.com/clevanilson/cs-trading-platform/pkg/errorc"
 
 type Balance interface {
 	AssetID() string
-	Amount() uint64
-	Deposit(amount int) error
-	Withdraw(amount int) error
+	Amount() float64
+	Deposit(amount float64) error
+	Withdraw(amount float64) error
 }
 
 type balance struct {
 	assetID string
-	amount  uint64
+	amount  float64
 }
 
 type BalanceBuilder struct {
 	AssetID string
-	Amount  int
+	Amount  float64
 }
 
 func NewBalance(builder BalanceBuilder) (*balance, error) {
@@ -25,7 +25,7 @@ func NewBalance(builder BalanceBuilder) (*balance, error) {
 	}
 	return &balance{
 		assetID: builder.AssetID,
-		amount:  uint64(builder.Amount),
+		amount:  builder.Amount,
 	}, nil
 }
 
@@ -33,25 +33,25 @@ func (b *balance) AssetID() string {
 	return b.assetID
 }
 
-func (b *balance) Amount() uint64 {
+func (b *balance) Amount() float64 {
 	return b.amount
 }
 
-func (b *balance) Deposit(amount int) error {
+func (b *balance) Deposit(amount float64) error {
 	if amount <= 0 {
 		return errorc.NewDomain("Invalid amount")
 	}
-	b.amount += uint64(amount)
+	b.amount += amount
 	return nil
 }
 
-func (b *balance) Withdraw(amount int) error {
+func (b *balance) Withdraw(amount float64) error {
 	if amount <= 0 {
 		return errorc.NewDomain("Invalid amount")
 	}
-	if b.amount < uint64(amount) {
+	if b.amount < amount {
 		return errorc.NewDomain("Invalid amount")
 	}
-	b.amount -= uint64(amount)
+	b.amount -= amount
 	return nil
 }

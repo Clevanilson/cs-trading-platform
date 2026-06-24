@@ -8,8 +8,8 @@ import (
 type Account interface {
 	Name() string
 	ID() string
-	Deposit(assetID string, amount int) error
-	Withdraw(assetID string, amount int) error
+	Deposit(assetID string, amount float64) error
+	Withdraw(assetID string, amount float64) error
 	GetBalanceByAssetID(assetID string) (Balance, error)
 	Balances() []Balance
 }
@@ -45,7 +45,7 @@ func (a *account) ID() string {
 	return a.id.Value()
 }
 
-func (a *account) Deposit(assetID string, amount int) error {
+func (a *account) Deposit(assetID string, amount float64) error {
 	currentBalance, err := a.GetBalanceByAssetID(assetID)
 	if err == nil {
 		if err = currentBalance.Deposit(amount); err != nil {
@@ -72,7 +72,7 @@ func (a *account) GetBalanceByAssetID(assetID string) (Balance, error) {
 	return balance, nil
 }
 
-func (a *account) Withdraw(assetID string, amount int) error {
+func (a *account) Withdraw(assetID string, amount float64) error {
 	balance, err := a.GetBalanceByAssetID(assetID)
 	if err != nil {
 		return err
