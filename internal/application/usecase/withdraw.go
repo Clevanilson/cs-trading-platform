@@ -29,7 +29,10 @@ func (u *withdraw) Execute(input WithdrawInput) error {
 		return err
 	}
 	if account == nil {
-		return errorc.NewNotFound("account")
+		return errorc.NewNotFound("Account")
+	}
+	if account == nil {
+		return errorc.NewNotFound("Account")
 	}
 	if err = account.Withdraw(input.AssetID, input.Amount); err != nil {
 		return err

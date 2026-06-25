@@ -8,8 +8,16 @@ import (
 )
 
 func TestAccount(t *testing.T) {
+	var sut entity.Account
+
+	setup := func() {
+		var err error
+		sut, err = entity.NewAccount(entity.AccountBuilder{Name: "Renoir"})
+		assert.Equals(t, err, nil)
+	}
 
 	t.Run("With valid data", func(t *testing.T) {
+		setup()
 		ID := "uuid"
 		sut, err := entity.NewAccount(entity.AccountBuilder{
 			Name: "Renoir",
@@ -22,6 +30,7 @@ func TestAccount(t *testing.T) {
 	})
 
 	t.Run("With invalid name", func(t *testing.T) {
+		setup()
 		sut, err := entity.NewAccount(entity.AccountBuilder{
 			Name: "Reno1r",
 		})
@@ -32,10 +41,8 @@ func TestAccount(t *testing.T) {
 
 	t.Run("Deposit", func(t *testing.T) {
 		t.Run("With valid amount and new asset", func(t *testing.T) {
-			sut, err := entity.NewAccount(entity.AccountBuilder{
-				Name: "Renoir",
-			})
-			err = sut.Deposit("USD", 100)
+			setup()
+			err := sut.Deposit("USD", 100)
 			err = sut.Deposit("BTC", 150)
 			usd, err := sut.GetBalanceByAssetID("USD")
 			btc, err := sut.GetBalanceByAssetID("BTC")
@@ -48,10 +55,8 @@ func TestAccount(t *testing.T) {
 		})
 
 		t.Run("With valid amount and existing asset", func(t *testing.T) {
-			sut, err := entity.NewAccount(entity.AccountBuilder{
-				Name: "Renoir",
-			})
-			err = sut.Deposit("USD", 100)
+			setup()
+			err := sut.Deposit("USD", 100)
 			err = sut.Deposit("USD", 100)
 			err = sut.Deposit("BTC", 150)
 			err = sut.Deposit("BTC", 150)
@@ -66,19 +71,15 @@ func TestAccount(t *testing.T) {
 		})
 
 		t.Run("With invalid amount and new asset", func(t *testing.T) {
-			sut, err := entity.NewAccount(entity.AccountBuilder{
-				Name: "Renoir",
-			})
-			err = sut.Deposit("USD", -100)
+			setup()
+			err := sut.Deposit("USD", -100)
 			assert.NotEquals(t, err, nil)
 			assert.Equals(t, err.Error(), "Invalid amount")
 		})
 
 		t.Run("With invalid amount and existing asset", func(t *testing.T) {
-			sut, err := entity.NewAccount(entity.AccountBuilder{
-				Name: "Renoir",
-			})
-			err = sut.Deposit("USD", 100)
+			setup()
+			err := sut.Deposit("USD", 100)
 			err = sut.Deposit("USD", -100)
 			assert.NotEquals(t, err, nil)
 			assert.Equals(t, err.Error(), "Invalid amount")
@@ -87,10 +88,8 @@ func TestAccount(t *testing.T) {
 
 	t.Run("Withdraw", func(t *testing.T) {
 		t.Run("With valid amount and existig asset", func(t *testing.T) {
-			sut, err := entity.NewAccount(entity.AccountBuilder{
-				Name: "Renoir",
-			})
-			err = sut.Deposit("USD", 100)
+			setup()
+			err := sut.Deposit("USD", 100)
 			err = sut.Deposit("BTC", 100)
 			err = sut.Withdraw("USD", 50)
 			err = sut.Withdraw("BTC", 100)
@@ -107,10 +106,8 @@ func TestAccount(t *testing.T) {
 		})
 
 		t.Run("With valid amount and non-existent asset", func(t *testing.T) {
-			sut, err := entity.NewAccount(entity.AccountBuilder{
-				Name: "Renoir",
-			})
-			err = sut.Withdraw("USD", 50)
+			setup()
+			err := sut.Withdraw("USD", 50)
 			assert.NotEquals(t, err, nil)
 			assert.Equals(t, err.Error(), "Balance not found")
 			usd, err := sut.GetBalanceByAssetID("USD")
@@ -120,10 +117,8 @@ func TestAccount(t *testing.T) {
 		})
 
 		t.Run("With invalid amount and exisiting asset", func(t *testing.T) {
-			sut, err := entity.NewAccount(entity.AccountBuilder{
-				Name: "Verso",
-			})
-			err = sut.Deposit("BTC", 100)
+			setup()
+			err := sut.Deposit("BTC", 100)
 			err = sut.Withdraw("BTC", 150)
 			assert.NotEquals(t, err, nil)
 			assert.Equals(t, err.Error(), "Invalid amount")
@@ -135,10 +130,8 @@ func TestAccount(t *testing.T) {
 
 	t.Run("LockAmount", func(t *testing.T) {
 		t.Run("With funds", func(t *testing.T) {
-			sut, err := entity.NewAccount(entity.AccountBuilder{
-				Name: "Verso",
-			})
-			err = sut.Deposit("USD", 100)
+			setup()
+			err := sut.Deposit("USD", 100)
 			err = sut.Deposit("BTC", 100)
 			order1, err := entity.NewOrder(entity.OrderBuilder{
 				AccountID: sut.ID(),
@@ -165,10 +158,8 @@ func TestAccount(t *testing.T) {
 		})
 
 		t.Run("Without funds", func(t *testing.T) {
-			sut, err := entity.NewAccount(entity.AccountBuilder{
-				Name: "Verso",
-			})
-			err = sut.Deposit("USD", 10)
+			setup()
+			err := sut.Deposit("USD", 10)
 			err = sut.Deposit("BTC", 10)
 			order1, err := entity.NewOrder(entity.OrderBuilder{
 				AccountID: sut.ID(),
@@ -195,10 +186,8 @@ func TestAccount(t *testing.T) {
 
 	t.Run("UnlockAmount", func(t *testing.T) {
 		t.Run("With valid amount", func(t *testing.T) {
-			sut, err := entity.NewAccount(entity.AccountBuilder{
-				Name: "Verso",
-			})
-			err = sut.Deposit("USD", 10)
+			setup()
+			err := sut.Deposit("USD", 10)
 			order1, err := entity.NewOrder(entity.OrderBuilder{
 				AccountID: sut.ID(),
 				MarketID:  "BTC-USD",
@@ -214,10 +203,8 @@ func TestAccount(t *testing.T) {
 		})
 
 		t.Run("With invalid amount", func(t *testing.T) {
-			sut, err := entity.NewAccount(entity.AccountBuilder{
-				Name: "Verso",
-			})
-			err = sut.Deposit("USD", 10)
+			setup()
+			err := sut.Deposit("USD", 10)
 			order1, err := entity.NewOrder(entity.OrderBuilder{
 				AccountID: sut.ID(),
 				MarketID:  "BTC-USD",

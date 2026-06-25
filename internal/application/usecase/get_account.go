@@ -5,15 +5,19 @@ import (
 	"github.com/clevanilson/cs-trading-platform/pkg/errorc"
 )
 
-type GetAccount struct {
+type GetAccount interface {
+	Execute(input GetAccountInput) (*GetAccountOutput, error)
+}
+
+type getAccount struct {
 	repository repository.AccountRepository
 }
 
-func NewGetAccount(repository repository.AccountRepository) *GetAccount {
-	return &GetAccount{repository}
+func NewGetAccount(repository repository.AccountRepository) *getAccount {
+	return &getAccount{repository}
 }
 
-func (u *GetAccount) Execute(input GetAccountInput) (*GetAccountOutput, error) {
+func (u *getAccount) Execute(input GetAccountInput) (*GetAccountOutput, error) {
 	account, err := u.repository.GetByID(input.ID)
 	if err != nil {
 		return nil, err

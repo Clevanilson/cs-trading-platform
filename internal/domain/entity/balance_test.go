@@ -8,6 +8,17 @@ import (
 )
 
 func TestBalance(t *testing.T) {
+	var sut entity.Balance
+
+	setup := func() {
+		var err error
+		sut, err = entity.NewBalance(entity.BalanceBuilder{
+			AssetID: "BTC",
+			Amount:  100,
+		})
+		assert.Equals(t, err, nil)
+	}
+
 	t.Run("With valid data", func(t *testing.T) {
 		sut, err := entity.NewBalance(entity.BalanceBuilder{
 			AssetID: "BTC",
@@ -77,24 +88,17 @@ func TestBalance(t *testing.T) {
 
 	t.Run("LockAmount", func(t *testing.T) {
 		t.Run("With valid amount", func(t *testing.T) {
-			sut, err := entity.NewBalance(entity.BalanceBuilder{
-				AssetID: "BTC",
-				Amount:  100,
-			})
+			setup()
+			err := sut.LockAmount(50)
 			assert.NotEquals(t, sut, nil)
-			err = sut.LockAmount(50)
 			err = sut.LockAmount(50)
 			assert.Equals(t, err, nil)
 			assert.Equals(t, sut.Amount(), 0)
 		})
 
 		t.Run("With invalid amount", func(t *testing.T) {
-			sut, err := entity.NewBalance(entity.BalanceBuilder{
-				AssetID: "BTC",
-				Amount:  100,
-			})
-			assert.NotEquals(t, sut, nil)
-			err = sut.LockAmount(150)
+			setup()
+			err := sut.LockAmount(150)
 			assert.NotEquals(t, err, nil)
 			assert.Equals(t, err.Error(), "Insufficient funds")
 			assert.Equals(t, sut.Amount(), 100)
@@ -107,12 +111,9 @@ func TestBalance(t *testing.T) {
 
 	t.Run("UnlockAmount", func(t *testing.T) {
 		t.Run("With valid amount", func(t *testing.T) {
-			sut, err := entity.NewBalance(entity.BalanceBuilder{
-				AssetID: "BTC",
-				Amount:  100,
-			})
+			setup()
+			err := sut.LockAmount(50)
 			assert.NotEquals(t, sut, nil)
-			err = sut.LockAmount(50)
 			err = sut.UnlockAmount(25)
 			assert.Equals(t, err, nil)
 			assert.Equals(t, sut.Amount(), 75)
@@ -122,11 +123,8 @@ func TestBalance(t *testing.T) {
 		})
 
 		t.Run("With invalid amount", func(t *testing.T) {
-			sut, err := entity.NewBalance(entity.BalanceBuilder{
-				AssetID: "BTC",
-				Amount:  100,
-			})
-			sut.LockAmount(50)
+			setup()
+			err := sut.LockAmount(50)
 			err = sut.UnlockAmount(100)
 			assert.NotEquals(t, err, nil)
 			assert.Equals(t, err.Error(), "Invalid amount")

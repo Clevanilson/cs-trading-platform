@@ -11,9 +11,17 @@ import (
 
 func TestGetAccoun(t *testing.T) {
 	repository := infrarepository.NewAccountMemoryRepository()
-	sut := usecase.NewGetAccount(repository)
+	var sut usecase.GetAccount
+
+	setup := func() {
+		var err error
+		repository = infrarepository.NewAccountMemoryRepository()
+		sut = usecase.NewGetAccount(repository)
+		assert.Equals(t, err, nil)
+	}
 
 	t.Run("With existing account", func(t *testing.T) {
+		setup()
 		ID := "uuid"
 		account, err := entity.NewAccount(entity.AccountBuilder{
 			Name: "Jhon Doe",
@@ -25,5 +33,13 @@ func TestGetAccoun(t *testing.T) {
 		assert.Equals(t, output.Name, account.Name())
 		assert.Equals(t, output.ID, account.ID())
 		assert.Equals(t, len(output.Balance), 0)
+	})
+
+	t.Run("With a non-existent account", func(t *testing.T) {
+		setup()
+		output, err := sut.Execute(usecase.GetAccountInput{ID: "cbce8b3e-c5fb-4118-87dc-db0897241c48"})
+		assert.NotEquals(t, err, nil)
+		assert.Equals(t, output, nil)
+		assert.Equals(t, err.Error(), "Account not found")
 	})
 }

@@ -29,7 +29,7 @@ func (u *deposit) Execute(input DepositInput) error {
 		return err
 	}
 	if account == nil {
-		return errorc.NewNotFound("account")
+		return errorc.NewNotFound("Account")
 	}
 	if err = account.Deposit(input.AssetID, input.Amount); err != nil {
 		return err

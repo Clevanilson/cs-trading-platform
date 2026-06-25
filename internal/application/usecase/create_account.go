@@ -5,15 +5,27 @@ import (
 	"github.com/clevanilson/cs-trading-platform/internal/domain/entity"
 )
 
-type CreateAccount struct {
+type CreateAccount interface {
+	Execute(input CreateAccountInput) (*CreateAccountOutput, error)
+}
+
+type CreateAccountInput struct {
+	Name string `json:"name"`
+}
+
+type CreateAccountOutput struct {
+	ID string `json:"id"`
+}
+
+type createAccount struct {
 	repository repository.AccountRepository
 }
 
-func NewCreateAccount(repository repository.AccountRepository) *CreateAccount {
-	return &CreateAccount{repository}
+func NewCreateAccount(repository repository.AccountRepository) *createAccount {
+	return &createAccount{repository}
 }
 
-func (u *CreateAccount) Execute(input CreateAccountInput) (*CreateAccountOutput, error) {
+func (u *createAccount) Execute(input CreateAccountInput) (*CreateAccountOutput, error) {
 	account, err := entity.NewAccount(entity.AccountBuilder{
 		Name: input.Name,
 	})
@@ -25,12 +37,4 @@ func (u *CreateAccount) Execute(input CreateAccountInput) (*CreateAccountOutput,
 		return nil, err
 	}
 	return &CreateAccountOutput{ID: account.ID()}, nil
-}
-
-type CreateAccountInput struct {
-	Name string `json:"name"`
-}
-
-type CreateAccountOutput struct {
-	ID string `json:"id"`
 }
