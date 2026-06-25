@@ -97,10 +97,10 @@ func TestAccount(t *testing.T) {
 			usd, err := sut.GetBalanceByAssetID("USD")
 			assert.Equals(t, err, nil)
 			btc, err := sut.GetBalanceByAssetID("BTC")
-			assert.NotEquals(t, err, nil)
-			assert.Equals(t, btc, nil)
-			assert.Equals(t, err.Error(), "Balance not found")
-			assert.Equals(t, len(sut.Balances()), 1)
+			assert.Equals(t, err, nil)
+			assert.NotEquals(t, btc, nil)
+			assert.Equals(t, btc.Amount(), 0)
+			assert.Equals(t, len(sut.Balances()), 2)
 			assert.Equals(t, usd.AssetID(), "USD")
 			assert.Equals(t, usd.Amount(), 50)
 			assert.Equals(t, usd.Amount(), 50)
@@ -123,13 +123,111 @@ func TestAccount(t *testing.T) {
 			sut, err := entity.NewAccount(entity.AccountBuilder{
 				Name: "Verso",
 			})
-			err = sut.Deposit("123", 100)
-			err = sut.Withdraw("123", 150)
+			err = sut.Deposit("BTC", 100)
+			err = sut.Withdraw("BTC", 150)
 			assert.NotEquals(t, err, nil)
 			assert.Equals(t, err.Error(), "Invalid amount")
 			err = sut.Withdraw("321", 1)
 			assert.NotEquals(t, err, nil)
 			assert.Equals(t, err.Error(), "Balance not found")
+		})
+	})
+
+	t.Run("LockAmount", func(t *testing.T) {
+		t.Run("With funds", func(t *testing.T) {
+			sut, err := entity.NewAccount(entity.AccountBuilder{
+				Name: "Verso",
+			})
+			err = sut.Deposit("USD", 100)
+			err = sut.Deposit("BTC", 100)
+			order1, err := entity.NewOrder(entity.OrderBuilder{
+				AccountID: sut.ID(),
+				MarketID:  "BTC-USD",
+				Side:      "buy",
+				Price:     10,
+				Amount:    5,
+			})
+			order2, err := entity.NewOrder(entity.OrderBuilder{
+				AccountID: sut.ID(),
+				MarketID:  "BTC-USD",
+				Side:      "sell",
+				Price:     10,
+				Amount:    50,
+			})
+			err = sut.LockAmount(order1)
+			asset, err := sut.GetBalanceByAssetID("USD")
+			assert.Equals(t, err, nil)
+			assert.Equals(t, asset.Amount(), 50)
+			err = sut.LockAmount(order2)
+			asset, err = sut.GetBalanceByAssetID("BTC")
+			assert.Equals(t, err, nil)
+			assert.Equals(t, asset.Amount(), 50)
+		})
+
+		t.Run("Without funds", func(t *testing.T) {
+			sut, err := entity.NewAccount(entity.AccountBuilder{
+				Name: "Verso",
+			})
+			err = sut.Deposit("USD", 10)
+			err = sut.Deposit("BTC", 10)
+			order1, err := entity.NewOrder(entity.OrderBuilder{
+				AccountID: sut.ID(),
+				MarketID:  "BTC-USD",
+				Side:      "buy",
+				Price:     10,
+				Amount:    5,
+			})
+			order2, err := entity.NewOrder(entity.OrderBuilder{
+				AccountID: sut.ID(),
+				MarketID:  "BTC-USD",
+				Side:      "sell",
+				Price:     10,
+				Amount:    50,
+			})
+			err = sut.LockAmount(order1)
+			assert.NotEquals(t, err, nil)
+			assert.Equals(t, err.Error(), "Insufficient funds")
+			err = sut.LockAmount(order2)
+			assert.NotEquals(t, err, nil)
+			assert.Equals(t, err.Error(), "Insufficient funds")
+		})
+	})
+
+	t.Run("UnlockAmount", func(t *testing.T) {
+		t.Run("With valid amount", func(t *testing.T) {
+			sut, err := entity.NewAccount(entity.AccountBuilder{
+				Name: "Verso",
+			})
+			err = sut.Deposit("USD", 10)
+			order1, err := entity.NewOrder(entity.OrderBuilder{
+				AccountID: sut.ID(),
+				MarketID:  "BTC-USD",
+				Side:      "buy",
+				Price:     10,
+				Amount:    1,
+			})
+			err = sut.LockAmount(order1)
+			err = sut.UnlockAmount(order1)
+			asset, err := sut.GetBalanceByAssetID("USD")
+			assert.Equals(t, err, nil)
+			assert.Equals(t, asset.Amount(), 10)
+		})
+
+		t.Run("With invalid amount", func(t *testing.T) {
+			sut, err := entity.NewAccount(entity.AccountBuilder{
+				Name: "Verso",
+			})
+			err = sut.Deposit("USD", 10)
+			order1, err := entity.NewOrder(entity.OrderBuilder{
+				AccountID: sut.ID(),
+				MarketID:  "BTC-USD",
+				Side:      "buy",
+				Price:     10,
+				Amount:    1,
+			})
+			err = sut.UnlockAmount(order1)
+			assert.NotEquals(t, err, nil)
+			assert.Equals(t, err.Error(), "Invalid amount")
 		})
 	})
 

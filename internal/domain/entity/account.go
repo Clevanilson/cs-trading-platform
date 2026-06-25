@@ -12,6 +12,8 @@ type Account interface {
 	Withdraw(assetID string, amount float64) error
 	GetBalanceByAssetID(assetID string) (Balance, error)
 	Balances() []Balance
+	LockAmount(order Order) error
+	UnlockAmount(order Order) error
 }
 
 type account struct {
@@ -80,11 +82,7 @@ func (a *account) Withdraw(assetID string, amount float64) error {
 	if err = balance.Withdraw(amount); err != nil {
 		return err
 	}
-	if balance.Amount() == 0 {
-		delete(a.balances, assetID)
-	}
 	return nil
-
 }
 
 func (a *account) Balances() []Balance {
@@ -93,4 +91,69 @@ func (a *account) Balances() []Balance {
 		balances = append(balances, balance)
 	}
 	return balances
+}
+
+func (a *account) LockAmount(order Order) error {
+	if !a.hasFunds(order) {
+		return errorc.NewDomain("Insufficient funds")
+	}
+	if order.Side() == "buy" {
+		asset, err := a.GetBalanceByAssetID(order.PaymentAsset())
+		if err != nil {
+			return err
+		}
+		if err := asset.LockAmount(order.Price() * order.Amount()); err != nil {
+			return nil
+		}
+	} else {
+		asset, err := a.GetBalanceByAssetID(order.MainAsset())
+		if err != nil {
+			return err
+		}
+		if err := asset.LockAmount(order.Amount()); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func (a *account) UnlockAmount(order Order) error {
+	if order.Side() == "buy" {
+		asset, err := a.GetBalanceByAssetID(order.PaymentAsset())
+		if err != nil {
+			return err
+		}
+		if err := asset.UnlockAmount(order.Price() * order.Amount()); err != nil {
+			return err
+		}
+	} else {
+		asset, err := a.GetBalanceByAssetID(order.MainAsset())
+		if err != nil {
+			return err
+		}
+		if err := asset.UnlockAmount(order.Amount()); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func (a *account) hasFunds(order Order) bool {
+	var assetId string
+	var orderValue float64
+	if order.Side() == "buy" {
+		assetId = order.PaymentAsset()
+		orderValue = order.Price() * order.Amount()
+	} else {
+		assetId = order.MainAsset()
+		orderValue = order.Amount()
+	}
+	balance, err := a.GetBalanceByAssetID(assetId)
+	if err != nil {
+		return false
+	}
+	if balance.Amount() < orderValue {
+		return false
+	}
+	return true
 }
