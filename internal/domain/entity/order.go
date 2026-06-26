@@ -3,6 +3,7 @@ package entity
 import (
 	"regexp"
 	"strings"
+	"time"
 
 	valueobject "github.com/clevanilson/cs-trading-platform/internal/domain/value_object"
 	"github.com/clevanilson/cs-trading-platform/pkg/errorc"
@@ -16,6 +17,8 @@ type Order interface {
 	Amount() float64
 	MainAsset() string
 	PaymentAsset() string
+	Status() string
+	CreatedAt() time.Time
 }
 
 type OrderBuilder struct {
@@ -25,6 +28,8 @@ type OrderBuilder struct {
 	Side      string
 	Price     float64
 	Amount    float64
+	Status    string
+	CreatedAt time.Time
 }
 
 type order struct {
@@ -36,6 +41,8 @@ type order struct {
 	amount       float64
 	mainAsset    string
 	paymentAsset string
+	status       string
+	createdAt    time.Time
 }
 
 func NewOrder(builder OrderBuilder) (*order, error) {
@@ -55,6 +62,15 @@ func NewOrder(builder OrderBuilder) (*order, error) {
 	if !regexp.MustCompile(`[A-Z]{3}-[A-Z]{3}`).MatchString(builder.MarketID) {
 		return nil, errorc.NewDomain("Invalid marketID")
 	}
+	if builder.Status == "" {
+		builder.Status = "open"
+	}
+	if builder.Status != "open" && builder.Status != "closed" && builder.Status != "canceled" {
+		return nil, errorc.NewDomain("Invalid status")
+	}
+	if builder.CreatedAt.IsZero() {
+		builder.CreatedAt = time.Now()
+	}
 	return &order{
 		id:           valueobject.NewID(builder.ID),
 		marketID:     builder.MarketID,
@@ -64,6 +80,8 @@ func NewOrder(builder OrderBuilder) (*order, error) {
 		amount:       builder.Amount,
 		mainAsset:    assets[0],
 		paymentAsset: assets[1],
+		status:       builder.Status,
+		createdAt:    builder.CreatedAt,
 	}, nil
 }
 
@@ -97,4 +115,12 @@ func (o *order) MainAsset() string {
 
 func (o *order) PaymentAsset() string {
 	return o.paymentAsset
+}
+
+func (o *order) Status() string {
+	return o.status
+}
+
+func (o *order) CreatedAt() time.Time {
+	return o.createdAt
 }
