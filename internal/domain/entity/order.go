@@ -19,6 +19,7 @@ type Order interface {
 	PaymentAsset() string
 	Status() string
 	CreatedAt() time.Time
+	Fill(amount float64, price float64) error
 }
 
 type OrderBuilder struct {
@@ -43,6 +44,8 @@ type order struct {
 	paymentAsset string
 	status       string
 	createdAt    time.Time
+	filledAmount float64
+	filledPrice  float64
 }
 
 func NewOrder(builder OrderBuilder) (*order, error) {
@@ -82,6 +85,8 @@ func NewOrder(builder OrderBuilder) (*order, error) {
 		paymentAsset: assets[1],
 		status:       builder.Status,
 		createdAt:    builder.CreatedAt,
+		filledAmount: 0,
+		filledPrice:  0,
 	}, nil
 }
 
@@ -106,7 +111,7 @@ func (o *order) Price() float64 {
 }
 
 func (o *order) Amount() float64 {
-	return o.amount
+	return o.amount - o.filledAmount
 }
 
 func (o *order) MainAsset() string {
@@ -123,4 +128,16 @@ func (o *order) Status() string {
 
 func (o *order) CreatedAt() time.Time {
 	return o.createdAt
+}
+
+func (o *order) Fill(amount float64, price float64) error {
+	if amount <= 0 {
+		return errorc.NewDomain("Invalid amount")
+	}
+	if price <= 0 {
+		return errorc.NewDomain("Invalid price")
+	}
+	o.filledAmount += amount
+	o.filledPrice = (o.filledPrice*o.filledAmount + price*amount) / (o.filledAmount + amount)
+	return nil
 }

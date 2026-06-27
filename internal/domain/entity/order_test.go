@@ -9,6 +9,21 @@ import (
 )
 
 func TestOrder(t *testing.T) {
+	var sut entity.Order
+
+	setup := func() {
+		var err error
+		sut, err = entity.NewOrder(entity.OrderBuilder{
+			AccountID: "123",
+			MarketID:  "BTC-USD",
+			Side:      "buy",
+			Price:     1000,
+			Amount:    10,
+		})
+		assert.Equals(t, err, nil)
+		assert.NotEquals(t, sut, nil)
+	}
+
 	t.Run("With valid data", func(t *testing.T) {
 		accountId := valueobject.NewID(nil).Value()
 		sut, err := entity.NewOrder(entity.OrderBuilder{
@@ -113,6 +128,20 @@ func TestOrder(t *testing.T) {
 		assert.NotEquals(t, err, nil)
 		assert.Equals(t, sut, nil)
 		assert.Equals(t, err.Error(), "Invalid status")
+	})
+
+	t.Run("Fill with valid data", func(t *testing.T) {
+		setup()
+		err := sut.Fill(1, 1000)
+		assert.Equals(t, err, nil)
+		assert.Equals(t, sut.Amount(), 9)
+	})
+
+	t.Run("Fill with invalid amount", func(t *testing.T) {
+		setup()
+		err := sut.Fill(-1, 1000)
+		assert.NotEquals(t, err, nil)
+		assert.Equals(t, err.Error(), "Invalid amount")
 	})
 
 }
