@@ -1,9 +1,0 @@
-services:
-  cs-trading-platform:
-    build:
-      context: ..
-      dockerfile: ./build/Dockerfile.dev
-    container_name: cs-trading-platform
-    image: cs-trading-platform
-    volumes:
-      - ..:/app

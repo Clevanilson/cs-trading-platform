@@ -1,0 +1,36 @@
+services:
+  cs-trading-platform-account-service:
+    build:
+      context: .
+      dockerfile: ./backend/account_service/build/Dockerfile.dev
+    environment:
+      - PORT=3001
+    container_name: cs-trading-platform-account-service
+    volumes:
+      - ./backend/account_service:/app/account_service
+      - ./backend/devpack:/app/devpack
+    ports: 
+      - 3001:3001
+    depends_on:
+      - rabbitmq
+  cs-trading-platform-order-service:
+    build:
+      context: .
+      dockerfile: ./backend/order_service/build/Dockerfile.dev
+    environment:
+      - PORT=3001
+    container_name: cs-trading-platform-order-service
+    volumes:
+      - ./backend/order_service:/app/order_service
+      - ./backend/devpack:/app/devpack
+    ports: 
+      - 3000:3002
+    depends_on:
+      - rabbitmq
+  
+  rabbitmq:
+    container_name: rabbitmq
+    image: rabbitmq:management-alpine
+    ports:
+      - 15672:15672
+      - 5672:5672

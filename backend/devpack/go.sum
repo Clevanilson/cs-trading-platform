@@ -1,0 +1,4 @@
+github.com/clevanilson/cs-trading-platform v0.0.0-20260627022234-33afa37a4365 h1:V/gQ0OQQFT62HHMnaNVgt1PkQCKdFfoID8xYfhKmv1g=
+github.com/clevanilson/cs-trading-platform v0.0.0-20260627022234-33afa37a4365/go.mod h1:xwiK0dMWactNrqdtuNEjsXFI46kxhthn4S931OeakWQ=
+github.com/google/uuid v1.6.0 h1:NIvaJDMOsjHA8n1jAhLSgzrAzy1Hgr+hNrb57e+94F0=
+github.com/google/uuid v1.6.0/go.mod h1:TIyPZe4MgqvfeYDBFedMoGGpEw/LqOeaOT+nhxU+yHo=
