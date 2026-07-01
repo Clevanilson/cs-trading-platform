@@ -3,13 +3,13 @@ package pkgqueue
 import (
 	"strings"
 
+	pkgerror "github.com/clevanilson/cs-trading-platform/devpack/pkg/error"
 	"github.com/streadway/amqp"
 )
 
 type rabbitAdapter struct {
 	conneection *amqp.Connection
 	channel     *amqp.Channel
-	queues      map[string]*amqp.Queue
 }
 
 func NewRabbitAdapter() (*rabbitAdapter, error) {
@@ -24,21 +24,7 @@ func NewRabbitAdapter() (*rabbitAdapter, error) {
 	return &rabbitAdapter{
 		conneection: connection,
 		channel:     channel,
-		queues:      make(map[string]*amqp.Queue),
 	}, nil
-}
-
-func (q *rabbitAdapter) SetupExchange(name string) error {
-	return q.channel.ExchangeDeclare(name, "direct", true, false, false, false, nil)
-}
-
-func (q *rabbitAdapter) SetupQueue(name string) error {
-	queue, err := q.channel.QueueDeclare(name, true, false, false, false, nil)
-	if err != nil {
-		return err
-	}
-	q.queues[name] = &queue
-	return nil
 }
 
 func (q *rabbitAdapter) Close() error {
@@ -49,6 +35,24 @@ func (q *rabbitAdapter) Close() error {
 	return q.channel.Close()
 }
 
+func (q *rabbitAdapter) SetupQueue(name string) error {
+	segments := strings.Split(name, ".")
+	if len(segments) != 2 {
+		return pkgerror.NewDomain("Invalid queue name")
+	}
+	if err := q.setupExchange(segments[0]); err != nil {
+		return err
+	}
+	_, err := q.channel.QueueDeclare(name, true, false, false, false, nil)
+	if err != nil {
+		return err
+	}
+	if err := q.channel.QueueBind(name, "", segments[0], false, nil); err != nil {
+		return err
+	}
+	return nil
+}
+
 func (q *rabbitAdapter) Publish(name string, payload []byte) error {
 	return q.channel.Publish(name, "", true, false, amqp.Publishing{
 		ContentType: "application/json",
@@ -56,12 +60,23 @@ func (q *rabbitAdapter) Publish(name string, payload []byte) error {
 	})
 }
 
-func (q *rabbitAdapter) Consume(name string, callback ConsumeCallback) {
-	callback([]byte(`{}`))
+func (q *rabbitAdapter) Consume(name string, callback ConsumeCallback) error {
+	messages, err := q.channel.Consume(name, "", false, false, false, false, nil)
+	if err != nil {
+		return err
+	}
 
+	for message := range messages {
+		go func() {
+			if err := callback(message.Body); err != nil {
+				err = message.Nack(false, true)
+			}
+			message.Ack(false)
+		}()
+	}
+	return nil
 }
 
-func (q *rabbitAdapter) BindQueue(queue string) error {
-	segments := strings.Split(queue, ".")
-	return q.channel.QueueBind(queue, "", segments[0], false, nil)
+func (q *rabbitAdapter) setupExchange(name string) error {
+	return q.channel.ExchangeDeclare(name, "direct", true, false, false, false, nil)
 }

@@ -1,10 +1,9 @@
 package pkgqueue
 
 type Queue interface {
-	Publish(exchange string, payload []byte)
-	Consume(queue string, callback ConsumeCallback)
+	Publish(exchange string, payload []byte) error
+	Consume(queue string, callback ConsumeCallback) error
 	Close() error
-	SetupExchange(name string) error
 	SetupQueue(name string) error
 }
 
