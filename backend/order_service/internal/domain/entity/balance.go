@@ -28,6 +28,9 @@ func NewBalance(builder BalanceBuilder) (*balance, error) {
 	if builder.Amount <= 0 {
 		return nil, pkgerror.NewDomain("Invalid amount")
 	}
+	if builder.AssetID == "" {
+		return nil, pkgerror.NewDomain("Invalid asset ID")
+	}
 	return &balance{
 		assetID:      builder.AssetID,
 		amount:       builder.Amount,

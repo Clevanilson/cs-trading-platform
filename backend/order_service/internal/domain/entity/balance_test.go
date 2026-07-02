@@ -135,4 +135,14 @@ func TestBalance(t *testing.T) {
 			pkgassert.Equals(t, sut.Amount(), 50)
 		})
 	})
+
+	t.Run("With invalid asset ID", func(t *testing.T) {
+		sut, err := entity.NewBalance(entity.BalanceBuilder{
+			AssetID: "",
+			Amount:  100,
+		})
+		pkgassert.NotEquals(t, err, nil)
+		pkgassert.Equals(t, err.Error(), "Invalid asset ID")
+		pkgassert.Equals(t, sut, nil)
+	})
 }
