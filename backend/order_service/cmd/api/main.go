@@ -1,9 +1,15 @@
 package main
 
 import (
-	"fmt"
+	"os"
+	"strconv"
 
 	pkgqueue "github.com/clevanilson/cs-trading-platform/devpack/pkg/queue"
+	pkgserver "github.com/clevanilson/cs-trading-platform/devpack/pkg/server"
+	"github.com/clevanilson/cs-trading-platform/order_service/internal/application/controller"
+	"github.com/clevanilson/cs-trading-platform/order_service/internal/application/usecase"
+
+	infrarepository "github.com/clevanilson/cs-trading-platform/order_service/internal/infra/repository"
 )
 
 func main() {
@@ -12,17 +18,29 @@ func main() {
 		panic(err)
 	}
 	defer queue.Close()
-	if err := queue.SetupExchange("orderPlaced"); err != nil {
-		panic(err)
-	}
 	if err := queue.SetupQueue("orderPlaced.insertOrder"); err != nil {
 		panic(err)
 	}
-	if err := queue.BindQueue("orderPlaced.insertOrder"); err != nil {
-		panic(err)
+	httpServer := pkgserver.NewHttpAdapter()
+	walletRepository := infrarepository.NewWalletMemoryRepository()
+	controller.WalletController(
+		httpServer,
+		usecase.NewDeposit(walletRepository),
+		usecase.NewWithdraw(walletRepository),
+	)
+	orderRepository := infrarepository.NewOrderMemoryRepository()
+	controller.OrderController(
+		httpServer,
+		usecase.NewPlaceOrder(walletRepository, orderRepository, queue),
+	)
+	PORT_ENV := os.Getenv("PORT")
+	port := 3000
+	if PORT_ENV != "" {
+		converterd, err := strconv.ParseInt(PORT_ENV, 10, 64)
+		if err != nil {
+			panic(err)
+		}
+		port = int(converterd)
 	}
-	if err := queue.Publish("orderPlaced", []byte(`{ "message": "ttestt"}`)); err != nil {
-		panic(err)
-	}
-	fmt.Println("Connected")
+	httpServer.Start(port)
 }
