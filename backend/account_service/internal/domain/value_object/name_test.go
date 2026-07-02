@@ -9,7 +9,7 @@ import (
 
 func TestName(t *testing.T) {
 	t.Run("With valid value", func(t *testing.T) {
-		pkgassert.Each(t, []string{"Maelle", "Eren Yeager", "Noctis Lucis Caelum"}, func(value string) {
+		pkgassert.Each(t, []string{"Maelle", "Eren Yeager", "Noctis Lucis Caelum"}, func(value string, _ int) {
 			sut, err := valueobject.NewName(value)
 			pkgassert.Equals(t, err, nil)
 			pkgassert.NotEquals(t, sut, nil)
@@ -24,7 +24,7 @@ func TestName(t *testing.T) {
 			"Noct1s Lucis Caelum",
 			"John_Doe",
 		}
-		pkgassert.Each(t, values, func(value string) {
+		pkgassert.Each(t, values, func(value string, _ int) {
 			sut, err := valueobject.NewName(value)
 			pkgassert.NotEquals(t, err, nil)
 			pkgassert.Equals(t, err.Error(), "Invalid name")

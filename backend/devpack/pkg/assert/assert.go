@@ -17,10 +17,10 @@ func NotEquals[TValue comparable](t *testing.T, value1, value2 TValue) {
 	}
 }
 
-func Each[TValue comparable](t *testing.T, values []TValue, callback func(value TValue)) {
-	for _, value := range values {
+func Each[TValue comparable](t *testing.T, values []TValue, callback func(value TValue, index int)) {
+	for index, value := range values {
 		t.Run(fmt.Sprintf("%v", value), func(_ *testing.T) {
-			callback(value)
+			callback(value, index)
 		})
 	}
 
