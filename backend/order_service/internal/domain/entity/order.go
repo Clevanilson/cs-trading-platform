@@ -53,7 +53,7 @@ func NewOrder(builder OrderBuilder) (*order, error) {
 	if builder.Price < 0 {
 		return nil, pkgerror.NewDomain("Invalid price")
 	}
-	if builder.Amount < 0 {
+	if builder.Amount < 1 {
 		return nil, pkgerror.NewDomain("Invalid amount")
 	}
 	if builder.Side != "buy" && builder.Side != "sell" {
