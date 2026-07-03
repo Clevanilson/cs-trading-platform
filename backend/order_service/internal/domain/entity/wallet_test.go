@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	pkgassert "github.com/clevanilson/cs-trading-platform/devpack/pkg/assert"
+	pkgentity "github.com/clevanilson/cs-trading-platform/devpack/pkg/domain/entity"
 	"github.com/clevanilson/cs-trading-platform/order_service/internal/domain/entity"
 )
 
@@ -110,14 +111,14 @@ func TestAccount(t *testing.T) {
 			setup()
 			err := sut.Deposit("USD", 100)
 			err = sut.Deposit("BTC", 100)
-			order1, err := entity.NewOrder(entity.OrderBuilder{
+			order1, err := pkgentity.NewOrder(pkgentity.OrderBuilder{
 				AccountID: sut.AccountID(),
 				MarketID:  "BTC-USD",
 				Side:      "buy",
 				Price:     10,
 				Amount:    5,
 			})
-			order2, err := entity.NewOrder(entity.OrderBuilder{
+			order2, err := pkgentity.NewOrder(pkgentity.OrderBuilder{
 				AccountID: sut.AccountID(),
 				MarketID:  "BTC-USD",
 				Side:      "sell",
@@ -138,14 +139,14 @@ func TestAccount(t *testing.T) {
 			setup()
 			err := sut.Deposit("USD", 10)
 			err = sut.Deposit("BTC", 10)
-			order1, err := entity.NewOrder(entity.OrderBuilder{
+			order1, err := pkgentity.NewOrder(pkgentity.OrderBuilder{
 				AccountID: sut.AccountID(),
 				MarketID:  "BTC-USD",
 				Side:      "buy",
 				Price:     10,
 				Amount:    5,
 			})
-			order2, err := entity.NewOrder(entity.OrderBuilder{
+			order2, err := pkgentity.NewOrder(pkgentity.OrderBuilder{
 				AccountID: sut.AccountID(),
 				MarketID:  "BTC-USD",
 				Side:      "sell",
@@ -165,7 +166,7 @@ func TestAccount(t *testing.T) {
 		t.Run("With valid amount", func(t *testing.T) {
 			setup()
 			err := sut.Deposit("USD", 10)
-			order1, err := entity.NewOrder(entity.OrderBuilder{
+			order1, err := pkgentity.NewOrder(pkgentity.OrderBuilder{
 				AccountID: sut.AccountID(),
 				MarketID:  "BTC-USD",
 				Side:      "buy",
@@ -182,7 +183,7 @@ func TestAccount(t *testing.T) {
 		t.Run("With invalid amount", func(t *testing.T) {
 			setup()
 			err := sut.Deposit("USD", 10)
-			order1, err := entity.NewOrder(entity.OrderBuilder{
+			order1, err := pkgentity.NewOrder(pkgentity.OrderBuilder{
 				AccountID: sut.AccountID(),
 				MarketID:  "BTC-USD",
 				Side:      "buy",

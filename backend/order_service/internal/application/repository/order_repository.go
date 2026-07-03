@@ -1,9 +1,9 @@
 package repository
 
-import "github.com/clevanilson/cs-trading-platform/order_service/internal/domain/entity"
+import pkgentity "github.com/clevanilson/cs-trading-platform/devpack/pkg/domain/entity"
 
 type OrderRepository interface {
-	Save(order entity.Order) error
-	Update(order entity.Order) error
-	GetByID(id string) (entity.Order, error)
+	Save(order pkgentity.Order) error
+	Update(order pkgentity.Order) error
+	GetByID(id string) (pkgentity.Order, error)
 }

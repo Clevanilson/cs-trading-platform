@@ -46,10 +46,6 @@ func TestPlaceOrder(t *testing.T) {
 		pkgassert.NotEquals(t, output, nil)
 		pkgassert.NotEquals(t, output, nil)
 		pkgassert.Equals(t, output.OrderID, output.OrderID)
-		pkgassert.Equals(t, output.MarketID, input.MarketID)
-		pkgassert.Equals(t, output.Side, input.Side)
-		pkgassert.Equals(t, output.Amount, input.Amount)
-		pkgassert.Equals(t, output.Price, input.Price)
 		pkgassert.Equals(t, queue.PublishCalls, 1)
 		pkgassert.Equals(t, queue.PublishCalledWithExchange, "orderPlaced")
 		pkgassert.Each(t, queue.PublishCalledWithPayload, func(value byte, index int) {

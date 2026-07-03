@@ -1,6 +1,7 @@
 package entity
 
 import (
+	pkgentity "github.com/clevanilson/cs-trading-platform/devpack/pkg/domain/entity"
 	pkgerror "github.com/clevanilson/cs-trading-platform/devpack/pkg/error"
 )
 
@@ -10,8 +11,8 @@ type Wallet interface {
 	Withdraw(assetID string, amount float64) error
 	GetBalanceByAssetID(assetID string) (Balance, error)
 	Balances() []Balance
-	LockAmount(order Order) error
-	UnlockAmount(order Order) error
+	LockAmount(order pkgentity.Order) error
+	UnlockAmount(order pkgentity.Order) error
 }
 
 type wallet struct {
@@ -80,7 +81,7 @@ func (a *wallet) Balances() []Balance {
 	return balances
 }
 
-func (a *wallet) LockAmount(order Order) error {
+func (a *wallet) LockAmount(order pkgentity.Order) error {
 	if !a.hasFunds(order) {
 		return pkgerror.NewDomain("Insufficient funds")
 	}
@@ -104,7 +105,7 @@ func (a *wallet) LockAmount(order Order) error {
 	return nil
 }
 
-func (a *wallet) UnlockAmount(order Order) error {
+func (a *wallet) UnlockAmount(order pkgentity.Order) error {
 	if order.Side() == "buy" {
 		asset, err := a.GetBalanceByAssetID(order.PaymentAsset())
 		if err != nil {
@@ -125,7 +126,7 @@ func (a *wallet) UnlockAmount(order Order) error {
 	return nil
 }
 
-func (a *wallet) hasFunds(order Order) bool {
+func (a *wallet) hasFunds(order pkgentity.Order) bool {
 	var assetId string
 	var orderValue float64
 	if order.Side() == "buy" {

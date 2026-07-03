@@ -3,10 +3,11 @@ package usecase
 import (
 	"encoding/json"
 
+	pkgdto "github.com/clevanilson/cs-trading-platform/devpack/pkg/domain/dto"
+	pkgentity "github.com/clevanilson/cs-trading-platform/devpack/pkg/domain/entity"
 	pkgerror "github.com/clevanilson/cs-trading-platform/devpack/pkg/error"
 	pkgqueue "github.com/clevanilson/cs-trading-platform/devpack/pkg/queue"
 	"github.com/clevanilson/cs-trading-platform/order_service/internal/application/repository"
-	"github.com/clevanilson/cs-trading-platform/order_service/internal/domain/entity"
 )
 
 type PlaceOrder interface {
@@ -22,12 +23,7 @@ type PlaceOrderInput struct {
 }
 
 type PlaceOrderOutput struct {
-	OrderID   string  `json:"order_id"`
-	AccountID string  `json:"account_id"`
-	MarketID  string  `json:"market_id"`
-	Side      string  `json:"side"`
-	Amount    float64 `json:"amount"`
-	Price     float64 `json:"price"`
+	OrderID string `json:"order_id"`
 }
 
 type placeOrder struct {
@@ -56,7 +52,7 @@ func (u *placeOrder) Execute(input PlaceOrderInput) (*PlaceOrderOutput, error) {
 	if wallet == nil {
 		return nil, pkgerror.NewNotFound("Wallet")
 	}
-	order, err := entity.NewOrder(entity.OrderBuilder{
+	order, err := pkgentity.NewOrder(pkgentity.OrderBuilder{
 		AccountID: input.AccountID,
 		MarketID:  input.MarketID,
 		Side:      input.Side,
@@ -76,14 +72,16 @@ func (u *placeOrder) Execute(input PlaceOrderInput) (*PlaceOrderOutput, error) {
 		return nil, err
 	}
 	output := PlaceOrderOutput{
+		OrderID: order.ID(),
+	}
+	event, err := json.Marshal(pkgdto.PlaceOrderEvent{
 		OrderID:   order.ID(),
 		AccountID: order.AccountID(),
 		MarketID:  order.MarketID(),
 		Side:      order.Side(),
 		Amount:    order.Amount(),
 		Price:     order.Price(),
-	}
-	event, err := json.Marshal(output)
+	})
 	if err != nil {
 		return nil, err
 	}

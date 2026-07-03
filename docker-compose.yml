@@ -3,34 +3,60 @@ services:
     build:
       context: .
       dockerfile: ./backend/account_service/build/Dockerfile.dev
+    restart: unless-stopped
     environment:
       - PORT=3001
     container_name: cs-trading-platform-account-service
     volumes:
-      - ./backend/account_service:/app/account_service
-      - ./backend/devpack:/app/devpack
+      - ./backend/account_service:/app/backend/account_service
+      - ./backend/devpack:/app/backend/devpack
     ports: 
       - 3001:3001
     depends_on:
-      - rabbitmq
+      rabbitmq:
+        condition: service_healthy
   cs-trading-platform-order-service:
     build:
       context: .
       dockerfile: ./backend/order_service/build/Dockerfile.dev
+    restart: unless-stopped
     environment:
-      - PORT=3001
+      - PORT=3002
     container_name: cs-trading-platform-order-service
     volumes:
-      - ./backend/order_service:/app/order_service
-      - ./backend/devpack:/app/devpack
+      - ./backend/order_service:/app/backend/order_service
+      - ./backend/devpack:/app/backend/devpack
     ports: 
-      - 3000:3002
+      - 3002:3002
     depends_on:
-      - rabbitmq
-  
+      rabbitmq:
+        condition: service_healthy
+  cs-trading-platform-matching-service:
+    build:
+      context: .
+      dockerfile: ./backend/matching_service/build/Dockerfile.dev
+    restart: unless-stopped
+    environment:
+      - PORT=3003
+    container_name: cs-trading-platform-matching-service
+    volumes:
+      - ./backend/matching_service:/app/backend/matching_service
+      - ./backend/devpack:/app/backend/devpack
+    ports: 
+      - 3003:3003
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
   rabbitmq:
     container_name: rabbitmq
     image: rabbitmq:management-alpine
+    restart: unless-stopped
     ports:
       - 15672:15672
       - 5672:5672
+    healthcheck:
+      test: rabbitmq-diagnostics -q ping
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 30s

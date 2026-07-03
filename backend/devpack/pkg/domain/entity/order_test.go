@@ -1,19 +1,19 @@
-package entity_test
+package pkgentity_test
 
 import (
 	"testing"
 
 	pkgassert "github.com/clevanilson/cs-trading-platform/devpack/pkg/assert"
+	pkgentity "github.com/clevanilson/cs-trading-platform/devpack/pkg/domain/entity"
 	pkgvalueobject "github.com/clevanilson/cs-trading-platform/devpack/pkg/domain/value_object"
-	"github.com/clevanilson/cs-trading-platform/order_service/internal/domain/entity"
 )
 
 func TestOrder(t *testing.T) {
-	var sut entity.Order
+	var sut pkgentity.Order
 
 	setup := func() {
 		var err error
-		sut, err = entity.NewOrder(entity.OrderBuilder{
+		sut, err = pkgentity.NewOrder(pkgentity.OrderBuilder{
 			AccountID: "123",
 			MarketID:  "BTC-USD",
 			Side:      "buy",
@@ -26,7 +26,7 @@ func TestOrder(t *testing.T) {
 
 	t.Run("With valid data", func(t *testing.T) {
 		accountId := pkgvalueobject.NewID(nil).Value()
-		sut, err := entity.NewOrder(entity.OrderBuilder{
+		sut, err := pkgentity.NewOrder(pkgentity.OrderBuilder{
 			AccountID: accountId,
 			MarketID:  "BTC-USD",
 			Side:      "buy",
@@ -48,7 +48,7 @@ func TestOrder(t *testing.T) {
 
 	t.Run("With invalid price", func(t *testing.T) {
 		accountId := pkgvalueobject.NewID(nil).Value()
-		sut, err := entity.NewOrder(entity.OrderBuilder{
+		sut, err := pkgentity.NewOrder(pkgentity.OrderBuilder{
 			AccountID: accountId,
 			MarketID:  "BTC-USD",
 			Side:      "buy",
@@ -62,7 +62,7 @@ func TestOrder(t *testing.T) {
 
 	t.Run("With invalid amount", func(t *testing.T) {
 		accountId := pkgvalueobject.NewID(nil).Value()
-		sut, err := entity.NewOrder(entity.OrderBuilder{
+		sut, err := pkgentity.NewOrder(pkgentity.OrderBuilder{
 			AccountID: accountId,
 			MarketID:  "BTC-USD",
 			Side:      "sell",
@@ -76,7 +76,7 @@ func TestOrder(t *testing.T) {
 
 	t.Run("With invalid side", func(t *testing.T) {
 		accountId := pkgvalueobject.NewID(nil).Value()
-		sut, err := entity.NewOrder(entity.OrderBuilder{
+		sut, err := pkgentity.NewOrder(pkgentity.OrderBuilder{
 			AccountID: accountId,
 			MarketID:  "BTC-USD",
 			Side:      "-",
@@ -89,7 +89,7 @@ func TestOrder(t *testing.T) {
 	})
 
 	t.Run("With invalid accountId", func(t *testing.T) {
-		sut, err := entity.NewOrder(entity.OrderBuilder{
+		sut, err := pkgentity.NewOrder(pkgentity.OrderBuilder{
 			AccountID: "",
 			MarketID:  "BTC-USD",
 			Side:      "buy",
@@ -103,7 +103,7 @@ func TestOrder(t *testing.T) {
 
 	t.Run("With invalid market id", func(t *testing.T) {
 		accountId := pkgvalueobject.NewID(nil).Value()
-		sut, err := entity.NewOrder(entity.OrderBuilder{
+		sut, err := pkgentity.NewOrder(pkgentity.OrderBuilder{
 			AccountID: accountId,
 			MarketID:  "BTC-UD",
 			Side:      "sell",
@@ -117,7 +117,7 @@ func TestOrder(t *testing.T) {
 
 	t.Run("With invalid status", func(t *testing.T) {
 		accountId := pkgvalueobject.NewID(nil).Value()
-		sut, err := entity.NewOrder(entity.OrderBuilder{
+		sut, err := pkgentity.NewOrder(pkgentity.OrderBuilder{
 			AccountID: accountId,
 			MarketID:  "BTC-USD",
 			Side:      "buy",
