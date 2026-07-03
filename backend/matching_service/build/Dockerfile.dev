@@ -1,0 +1,21 @@
+FROM golang:1.26
+
+WORKDIR /app
+
+COPY ./backend/matching_service/go.mod ./backend/matching_service/go.mod
+
+COPY ./backend/devpack/go.mod ./backend/devpack/go.mod
+
+RUN go work init
+
+RUN go work use ./backend/matching_service
+
+RUN go work use ./backend/devpack
+
+RUN go mod download
+
+COPY ./backend/matching_service/ ./backend/matching_service
+
+COPY ./backend/devpack/ ./backend/devpack
+
+CMD ["go", "run", "./backend/matching_service/cmd/api/main.go"]
