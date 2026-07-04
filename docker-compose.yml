@@ -1,4 +1,18 @@
 services:
+  cs-trading-platform-api-gateway:
+    build:
+      context: .
+      dockerfile: ./backend/api_gateway/build/Dockerfile.dev
+    restart: unless-stopped
+    container_name: cs-trading-platform-api-gateway
+    ports:
+      - 80:80
+    depends_on:
+      - cs-trading-platform-account-service
+      - cs-trading-platform-order-service
+      - cs-trading-platform-matching-service
+    volumes:
+      - ./backend/api_gateway/nginx.conf:/etc/nginx/nginx.conf
   cs-trading-platform-account-service:
     build:
       context: .
