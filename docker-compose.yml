@@ -47,6 +47,25 @@ services:
     depends_on:
       rabbitmq:
         condition: service_healthy
+  cs-trading-platform-frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
+    restart: unless-stopped
+    container_name: cs-trading-platform-frontend
+    environment:
+      - VITE_ACCOUNT_API_URL=/api/account
+      - VITE_ORDER_API_URL=/api/order
+      - ACCOUNT_PROXY_TARGET=http://cs-trading-platform-account-service:3001
+      - ORDER_PROXY_TARGET=http://cs-trading-platform-order-service:3002
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    ports:
+      - 5173:5173
+    depends_on:
+      - cs-trading-platform-account-service
+      - cs-trading-platform-order-service
   rabbitmq:
     container_name: rabbitmq
     image: rabbitmq:management-alpine
