@@ -1,0 +1,13 @@
+:root {
+  color-scheme: dark;
+
+  --clr-background-01: #090d18;
+  --clr-surface-01: #111827;
+  --clr-surface-02: #172133;
+  --clr-border-01: #253247;
+  --clr-foreground-01: #f3f4f6;
+  --clr-muted-01: #94a3b8;
+  --clr-primary-01: #38bdf8;
+  --clr-danger-01: #f87171;
+  --clr-danger-02: #fca5a5;
+}

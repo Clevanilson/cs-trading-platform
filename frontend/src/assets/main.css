@@ -1,1 +1,29 @@
-@import 'tailwindcss';
+* {
+  box-sizing: border-box;
+}
+
+html {
+  font-size: var(--ft-size-root);
+  background-color: var(--clr-background-01);
+}
+
+body {
+  min-height: 100vh;
+  margin: 0;
+  background-color: var(--clr-background-01);
+  color: var(--clr-foreground-01);
+  font-family: var(--ft-family-01);
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button:not(:disabled) {
+  cursor: pointer;
+}
+
+#app {
+  min-height: 100vh;
+}
