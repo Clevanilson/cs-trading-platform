@@ -1,5 +1,5 @@
 import { describe, test, expect, beforeEach } from "vitest";
-import { AccountGateway } from "./account-gateway";
+import { AccountGateway } from "./account-http-gateway";
 import type { CreateAccountResponse } from "@/type/create-account-response";
 import { HttpClientMock } from "@/http/http-client-mock";
 import type { CreateAccountRequest } from "@/type/create-account-request";

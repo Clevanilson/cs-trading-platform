@@ -3,7 +3,7 @@ import type { CreateAccountRequest } from "@/type/create-account-request";
 import type { CreateAccountResponse } from "@/type/create-account-response";
 import type { GetAccountResponse } from "@/type/get-account-response";
 
-export class AccountGateway {
+export class AccountHttpGateway {
   private readonly httpClient: HttpClient;
 
   constructor(httpClient: HttpClient) {
