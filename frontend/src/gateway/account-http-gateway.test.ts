@@ -1,13 +1,13 @@
 import { describe, test, expect, beforeEach } from "vitest";
-import { AccountGateway } from "./account-http-gateway";
+import { AccountHttpGateway } from "./account-http-gateway";
 import type { CreateAccountResponse } from "@/type/create-account-response";
 import { HttpClientMock } from "@/http/http-client-mock";
 import type { CreateAccountRequest } from "@/type/create-account-request";
 import type { GetAccountResponse } from "@/type/get-account-response";
 
-describe(AccountGateway.name, () => {
+describe(AccountHttpGateway.name, () => {
   let httpClient: HttpClientMock;
-  let sut: AccountGateway;
+  let sut: AccountHttpGateway;
 
   test("calling create", async () => {
     const request: CreateAccountRequest = {
@@ -34,6 +34,6 @@ describe(AccountGateway.name, () => {
 
   beforeEach(() => {
     httpClient = new HttpClientMock();
-    sut = new AccountGateway(httpClient);
+    sut = new AccountHttpGateway(httpClient);
   });
 });

@@ -2,8 +2,9 @@ import type { HttpClient } from "@/http/http-client";
 import type { CreateAccountRequest } from "@/type/create-account-request";
 import type { CreateAccountResponse } from "@/type/create-account-response";
 import type { GetAccountResponse } from "@/type/get-account-response";
+import type { AccountGateway } from "./account-gateway";
 
-export class AccountHttpGateway {
+export class AccountHttpGateway implements AccountGateway {
   private readonly httpClient: HttpClient;
 
   constructor(httpClient: HttpClient) {
