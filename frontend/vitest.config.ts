@@ -1,21 +1,21 @@
-import { fileURLToPath, URL } from 'node:url'
+import { fileURLToPath, URL } from "node:url";
 
-import { defineConfig, mergeConfig } from 'vitest/config'
+import { defineConfig, mergeConfig } from "vitest/config";
 
-import viteConfig from './vite.config.ts'
+import viteConfig from "./vite.config.ts";
 
 export default mergeConfig(
   viteConfig,
   defineConfig({
     test: {
       globals: true,
-      environment: 'happy-dom',
-      include: ['tests/**/*.spec.ts', 'tests/**/*.test.ts'],
+      environment: "happy-dom",
+      include: ["src/**/*.test.ts"],
       coverage: {
-        provider: 'v8',
-        reporter: ['text', 'json', 'html'],
-        include: ['src/**/*.{ts,vue}'],
-        exclude: ['src/main.ts'],
+        provider: "v8",
+        reporter: ["text", "json", "html"],
+        include: ["src/**/*.{ts,vue}"],
+        exclude: ["src/main.ts"],
         thresholds: {
           lines: 80,
           functions: 80,
@@ -26,8 +26,8 @@ export default mergeConfig(
     },
     resolve: {
       alias: {
-        '@': fileURLToPath(new URL('./src', import.meta.url)),
+        "@": fileURLToPath(new URL("./src", import.meta.url)),
       },
     },
   }),
-)
+);
