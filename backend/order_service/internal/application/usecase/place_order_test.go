@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	pkgassert "github.com/clevanilson/cs-trading-platform/devpack/pkg/assert"
+	pkgdto "github.com/clevanilson/cs-trading-platform/devpack/pkg/domain/dto"
 	pkgqueue "github.com/clevanilson/cs-trading-platform/devpack/pkg/queue"
 	"github.com/clevanilson/cs-trading-platform/order_service/internal/application/repository"
 	"github.com/clevanilson/cs-trading-platform/order_service/internal/application/usecase"
@@ -41,16 +42,20 @@ func TestPlaceOrder(t *testing.T) {
 			Price:     78_000,
 		}
 		output, err := sut.Execute(input)
-		outputJSON, err := json.Marshal(output)
 		pkgassert.Equals(t, err, nil)
-		pkgassert.NotEquals(t, output, nil)
 		pkgassert.NotEquals(t, output, nil)
 		pkgassert.Equals(t, output.OrderID, output.OrderID)
 		pkgassert.Equals(t, queue.PublishCalls, 1)
 		pkgassert.Equals(t, queue.PublishCalledWithExchange, "orderPlaced")
-		pkgassert.Each(t, queue.PublishCalledWithPayload, func(value byte, index int) {
-			pkgassert.Equals(t, value, outputJSON[index])
-		})
+		var event pkgdto.PlaceOrderEvent
+		err = json.Unmarshal(queue.PublishCalledWithPayload, &event)
+		pkgassert.Equals(t, err, nil)
+		pkgassert.Equals(t, event.OrderID, output.OrderID)
+		pkgassert.Equals(t, event.AccountID, wallet.AccountID())
+		pkgassert.Equals(t, event.MarketID, input.MarketID)
+		pkgassert.Equals(t, event.Side, input.Side)
+		pkgassert.Equals(t, event.Amount, input.Amount)
+		pkgassert.Equals(t, event.Price, input.Price)
 	})
 
 	t.Run("With insufficient funds", func(t *testing.T) {
