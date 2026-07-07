@@ -27,6 +27,7 @@ func main() {
 		httpServer,
 		usecase.NewDeposit(walletRepository),
 		usecase.NewWithdraw(walletRepository),
+		usecase.NewGetWallet(walletRepository),
 	)
 	orderRepository := infrarepository.NewOrderMemoryRepository()
 	controller.OrderController(
