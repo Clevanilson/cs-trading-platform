@@ -81,6 +81,7 @@ func (u *placeOrder) Execute(input PlaceOrderInput) (*PlaceOrderOutput, error) {
 		Side:      order.Side(),
 		Amount:    order.Amount(),
 		Price:     order.Price(),
+		Status:    order.Status(),
 	})
 	if err != nil {
 		return nil, err

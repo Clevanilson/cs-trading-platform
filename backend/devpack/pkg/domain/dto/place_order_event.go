@@ -7,4 +7,5 @@ type PlaceOrderEvent struct {
 	Side      string  `json:"side"`
 	Amount    float64 `json:"amount"`
 	Price     float64 `json:"price"`
+	Status    string  `json:"status"`
 }

@@ -56,6 +56,7 @@ func TestPlaceOrder(t *testing.T) {
 		pkgassert.Equals(t, event.Side, input.Side)
 		pkgassert.Equals(t, event.Amount, input.Amount)
 		pkgassert.Equals(t, event.Price, input.Price)
+		pkgassert.Equals(t, event.Status, "open")
 	})
 
 	t.Run("With insufficient funds", func(t *testing.T) {
