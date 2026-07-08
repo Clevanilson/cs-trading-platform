@@ -16,15 +16,14 @@ func TestAccount(t *testing.T) {
 
 	t.Run("With valid data", func(t *testing.T) {
 		setup()
-		ID := "uuid"
 		sut, err := entity.NewAccount(entity.AccountBuilder{
 			Name: "Renoir",
-			ID:   &ID,
+			ID:   "uuid",
 		})
 		pkgassert.NotEquals(t, sut, nil)
 		pkgassert.Equals(t, err, nil)
 		pkgassert.Equals(t, sut.Name(), "Renoir")
-		pkgassert.Equals(t, sut.ID(), ID)
+		pkgassert.Equals(t, sut.ID(), "uuid")
 	})
 
 	t.Run("With invalid name", func(t *testing.T) {

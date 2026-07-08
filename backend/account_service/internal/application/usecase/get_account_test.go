@@ -22,13 +22,12 @@ func TestGetAccoun(t *testing.T) {
 
 	t.Run("With existing account", func(t *testing.T) {
 		setup()
-		ID := "uuid"
 		account, err := entity.NewAccount(entity.AccountBuilder{
 			Name: "Jhon Doe",
-			ID:   &ID,
+			ID:   "uuid",
 		})
 		err = repository.Save(account)
-		output, err := sut.Execute(usecase.GetAccountInput{ID})
+		output, err := sut.Execute(usecase.GetAccountInput{ID: "uuid"})
 		pkgassert.Equals(t, err, nil)
 		pkgassert.Equals(t, output.Name, account.Name())
 		pkgassert.Equals(t, output.ID, account.ID())

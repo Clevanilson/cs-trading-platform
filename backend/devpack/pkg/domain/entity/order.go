@@ -23,7 +23,7 @@ type Order interface {
 }
 
 type OrderBuilder struct {
-	ID        *string
+	ID       string
 	AccountID string
 	MarketID  string
 	Side      string

@@ -17,7 +17,7 @@ type account struct {
 
 type AccountBuilder struct {
 	Name string
-	ID   *string
+	ID   string
 }
 
 func NewAccount(builder AccountBuilder) (*account, error) {

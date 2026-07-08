@@ -14,10 +14,10 @@ func (v id) Value() string {
 	return v.value
 }
 
-func NewID(value *string) *id {
+func NewID(value string) *id {
 	var _value string
-	if value != nil {
-		_value = *value
+	if value != "" {
+		_value = value
 	} else {
 		_value = uuid.New().String()
 	}

@@ -25,7 +25,7 @@ func TestOrder(t *testing.T) {
 	}
 
 	t.Run("With valid data", func(t *testing.T) {
-		accountId := pkgvalueobject.NewID(nil).Value()
+		accountId := pkgvalueobject.NewID("").Value()
 		sut, err := pkgentity.NewOrder(pkgentity.OrderBuilder{
 			AccountID: accountId,
 			MarketID:  "BTC-USD",
@@ -47,7 +47,7 @@ func TestOrder(t *testing.T) {
 	})
 
 	t.Run("With invalid price", func(t *testing.T) {
-		accountId := pkgvalueobject.NewID(nil).Value()
+		accountId := pkgvalueobject.NewID("").Value()
 		sut, err := pkgentity.NewOrder(pkgentity.OrderBuilder{
 			AccountID: accountId,
 			MarketID:  "BTC-USD",
@@ -61,7 +61,7 @@ func TestOrder(t *testing.T) {
 	})
 
 	t.Run("With invalid amount", func(t *testing.T) {
-		accountId := pkgvalueobject.NewID(nil).Value()
+		accountId := pkgvalueobject.NewID("").Value()
 		sut, err := pkgentity.NewOrder(pkgentity.OrderBuilder{
 			AccountID: accountId,
 			MarketID:  "BTC-USD",
@@ -75,7 +75,7 @@ func TestOrder(t *testing.T) {
 	})
 
 	t.Run("With invalid side", func(t *testing.T) {
-		accountId := pkgvalueobject.NewID(nil).Value()
+		accountId := pkgvalueobject.NewID("").Value()
 		sut, err := pkgentity.NewOrder(pkgentity.OrderBuilder{
 			AccountID: accountId,
 			MarketID:  "BTC-USD",
@@ -102,7 +102,7 @@ func TestOrder(t *testing.T) {
 	})
 
 	t.Run("With invalid market id", func(t *testing.T) {
-		accountId := pkgvalueobject.NewID(nil).Value()
+		accountId := pkgvalueobject.NewID("").Value()
 		sut, err := pkgentity.NewOrder(pkgentity.OrderBuilder{
 			AccountID: accountId,
 			MarketID:  "BTC-UD",
@@ -116,7 +116,7 @@ func TestOrder(t *testing.T) {
 	})
 
 	t.Run("With invalid status", func(t *testing.T) {
-		accountId := pkgvalueobject.NewID(nil).Value()
+		accountId := pkgvalueobject.NewID("").Value()
 		sut, err := pkgentity.NewOrder(pkgentity.OrderBuilder{
 			AccountID: accountId,
 			MarketID:  "BTC-USD",
