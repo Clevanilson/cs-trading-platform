@@ -1,6 +1,6 @@
 package pkgdto
 
-type PlaceOrderEvent struct {
+type OrderEvent struct {
 	OrderID   string  `json:"order_id"`
 	AccountID string  `json:"account_id"`
 	MarketID  string  `json:"market_id"`

@@ -15,8 +15,11 @@ func main() {
 	if err := queue.SetupQueue("orderPlaced.insertOrder"); err != nil {
 		panic(err)
 	}
-
+	if err := queue.SetupQueue("orderFilled.updateOrder"); err != nil {
+		panic(err)
+	}
 	if err := controller.CreateBookController(queue); err != nil {
 		panic(err)
 	}
+
 }
